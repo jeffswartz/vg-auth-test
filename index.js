@@ -53,7 +53,7 @@ app.get('/:sessionId', function (req, res) {
     appId: appId,
     sessionId: sessionId,
     token: token,
-    otjsSrcUrl: process.env.OPENTOK_JS_URL || 'https://static.opentok.com/v2/js/opentok.min.js',
+    otjsSrcUrl: process.env.OPENTOK_JS_URL ,
     otjsApiUrl: process.env.OVERRIDE_OPENTOK_JS_API_URL && process.env.VONAGE_VIDEO_API_SERVER_URL
   });
 });

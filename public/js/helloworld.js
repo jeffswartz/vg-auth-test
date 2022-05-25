@@ -1,8 +1,53 @@
 /* global OT, apiKey, appId, sessionId, token */
 
-var session = appId ? OT.initSession(appId, sessionId) : OT.initSession(apiKey, sessionId);
+var room = new VideoExpress.Room({
+  apiKey: appId,
+  sessionId: sessionId,
+  token: token,
+  roomContainer: 'roomContainer',
+}).on('connected', function() {
+  console.log(234234);
+  session = OT.sessions.where()[0]; // This is a hack. VideoExpress does not give access to the Session.  
+  session.on({
+    sessionConnected: function () {
+      session.publish(publisher);
+    },
 
-var publisher = OT.initPublisher('publisher');
+    streamCreated: function (event) {
+      log('new subscriber stream ' + event.stream.id);
+      session.subscribe(event.stream, 'streams-container', { insertMode: 'append' });
+    },
+    streamDestroyed: function (event) {
+      log('subscriber stream e' + event.stream.id);
+      session.subscribe(event.stream, 'streams-container', { insertMode: 'append' });
+    },
+    signal: function(e) {
+      log('signal ', JSON.stringify(e, null, 2));
+    },
+    
+    archiveStarted: function(e) {
+      log('archiveStarted ' + e.id);
+      archiveId = e.id;
+    },
+    
+    archiveStopped: function(e) {
+      log('archiveStopped ' + e.id);
+    },
+    
+    sessionDisconnected: function(e) {
+      log('sessionDisconnected');
+    }
+  });
+
+  room.camera.on('streamCreated', function (event) {
+    log('new published stream ' + event.stream.id);
+    streamId = event.stream.id;
+  });
+});
+
+room.join();
+
+var session;
 var streamId;
 var archiveId;
 var logElement;
@@ -15,41 +60,6 @@ var log = function (str) {
   logDiv.scrollTop = logDiv.scrollHeight;
 }
 
-session.on({
-  sessionConnected: function () {
-    session.publish(publisher);
-  },
-
-  streamCreated: function (event) {
-    log('new subscriber stream ' + event.stream.id);
-    session.subscribe(event.stream, 'streams-container', { insertMode: 'append' });
-  },
-  streamDestroyed: function (event) {
-    log('subscriber stream e' + event.stream.id);
-    session.subscribe(event.stream, 'streams-container', { insertMode: 'append' });
-  },
-  signal: function(e) {
-    log('signal ', JSON.stringify(e, null, 2));
-  },
-  
-  archiveStarted: function(e) {
-    log('archiveStarted ' + e.id);
-    archiveId = e.id;
-  },
-  
-  archiveStopped: function(e) {
-    log('archiveStopped ' + e.id);
-  },
-  
-  sessionDisconnected: function(e) {
-    log('sessionDisconnected');
-  }
-});
-
-publisher.on('streamCreated', function (event) {
-  log('new published stream ' + event.stream.id);
-  streamId = event.stream.id;
-});
 
 window.addEventListener('DOMContentLoaded', function () {
   logPre = document.getElementById('log-pre');
@@ -146,5 +156,3 @@ window.addEventListener('DOMContentLoaded', function () {
       .then(log('stream class list updated'));
   });
 });
-
-session.connect(token);
