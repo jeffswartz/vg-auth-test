@@ -16,7 +16,13 @@ var log = function (str) {
 }
 
 session.on({
+  connectionCreated: function (event) {
+    log('connection created -- connection.data ' + event.connection.data);
+  },
+
   sessionConnected: function () {
+    log('connected to session -- connection.data ' + session.connection.data);
+    log('connected to session -- session.capabilities.forceDisconnect ' + session.capabilities.forceDisconnect);
     log('connected to session ' + sessionId);
     session.publish(publisher);
   },

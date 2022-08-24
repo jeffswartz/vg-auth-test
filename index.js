@@ -76,7 +76,10 @@ app.get('/', async function (req, res) {
 app.get('/:sessionId', function (req, res) {
   var sessionId = req.params.sessionId;
   vonageVideo = getVonageVideo(req);
-  var token = vonageVideo.generateClientToken(sessionId);
+  var token = vonageVideo.generateClientToken(sessionId, {
+    role: 'moderator',
+    data: 'test-data',
+  });
   res.render('index.ejs', {
     appId: ((req.query && req.query.env) === 'dev') ? devAppId : appId,
     sessionId: sessionId,
