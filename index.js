@@ -8,7 +8,7 @@ var fs = require('fs');
 
 var vonageVideo;
 var appId = process.env.VONAGE_APP_ID;
-var otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://static.opentok.com/v2/js/opentok.min.js';
+var otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://unpkg.com/@vonage/video-client@2.23.3/dist/js/opentok.js';
 var keyPath = process.env.VONAGE_PRIVATE_KEY;
 var apiUrl = process.env.VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.vonage.com';
 var devAppId = process.env.DEV_VONAGE_APP_ID;
@@ -67,7 +67,7 @@ app.get('/', async function (req, res) {
     });
     console.log('new session:', session)
     var query = (req.query && req.query.env) ? '?env=' + req.query.env : '';
-    return res.redirect('/' + session[0].session_id + query);
+    return res.redirect('/' + session.sessionId + query);
   } catch(err) {
     return res.set(400).send(err.message);
   }
