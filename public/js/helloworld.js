@@ -85,6 +85,17 @@ window.addEventListener('DOMContentLoaded', function () {
       });
   });
 
+  document.getElementById('toggle-archive-layout-btn').addEventListener('click', function () {
+    log('toggleArchiveLayout ' + archiveId);
+    fetch('/toggleArchiveLayout/' +  archiveId + location.search, {
+      method: 'get'
+    })
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        log(JSON.stringify(data, null, 2));
+      });
+  });
+
   document.getElementById('force-disconnect-btn').addEventListener('click', function () {
     fetch('/forceDisconnect/' + sessionId + '/' +  session.connection.id + location.search, {
       method: 'get'
@@ -154,4 +165,8 @@ window.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-session.connect(token);
+session.connect(token,  function(error) {
+   if (error) {
+     console.log(error.message);
+   }
+ });

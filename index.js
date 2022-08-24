@@ -17,6 +17,7 @@ var devApiServerUrl = process.env.DEV_VONAGE_VIDEO_API_SERVER_URL || 'https://vi
 var devOtjsSrcUrl = process.env.DEV_OPENTOK_JS_URL || 'https://static.dev.tokbox.com/v2/js/opentok.js';
 
 var port = process.env.PORT || 3000;
+var archivelayoutType = 'verticalPresentation';
 
 // Verify that the VG app ID and private key path are defined
 if (!(appId && keyPath && devAppId && devKey)) {
@@ -79,6 +80,7 @@ app.get('/:sessionId', function (req, res) {
   var token = vonageVideo.generateClientToken(sessionId, {
     role: 'moderator',
     data: 'test-data',
+    initialLayoutClassList: ['test1', 'testTwo']
   });
   res.render('index.ejs', {
     appId: ((req.query && req.query.env) === 'dev') ? devAppId : appId,
@@ -92,7 +94,11 @@ app.get('/:sessionId', function (req, res) {
 app.get('/startArchive/:sessionId', async function (req, res) {
   vonageVideo = getVonageVideo(req);
   try {
-    var archive = await vonageVideo.startArchive(req.params.sessionId);
+    var archive = await vonageVideo.startArchive(req.params.sessionId, {
+      layout: {
+        type: archivelayoutType,
+      }
+    });
     return res.send(archive);
   } catch (error) {
     return res.set(400).send();
@@ -108,6 +114,19 @@ app.get('/stopArchive/:id', async function (req, res) {
     return res.set(400).send();
   }
 });
+
+app.get('/toggleArchiveLayout/:id', async function (req, res) {
+  vonageVideo = getVonageVideo(req);
+  try {
+    var archive = await vonageVideo.updateArchiveLayout(req.params.id, {
+      type: (archivelayoutType === 'verticalPresentation') ? 'horizontalPresentation' : 'verticalPresentation',
+    });
+    return res.send(archive);
+  } catch (error) {
+    return res.set(400).send();
+  }
+});
+
 
 app.get('/listArchives/:sessionId', async function (req, res) {
   vonageVideo = getVonageVideo(req);
