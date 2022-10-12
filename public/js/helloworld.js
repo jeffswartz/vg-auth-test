@@ -5,6 +5,7 @@ const session = OT.initSession(appId, sessionId);
 const publisher = OT.initPublisher('publisher');
 let streamId;
 let archiveId;
+let broadcastId;
 let logPre;
 let logDiv;
 
@@ -56,12 +57,19 @@ window.addEventListener('DOMContentLoaded', () => {
   logPre = document.getElementById('log-pre');
   logDiv = document.getElementById('log-div');
   const archiveResolutionOptions = document.getElementById('archive-resolution-options');
-
   const archiveOutputModeInputs = document.querySelectorAll('input[type=radio][name="archiveOutputMode"]');
+  const broadcastRtmp = document.getElementById('rtmp');
+  const broadcastRtmpOptions = document.getElementById('broadcast-rtmp-options');
+
   archiveOutputModeInputs.forEach((inputElement) => inputElement.addEventListener('change', () => {
     const opacity = (inputElement.value === 'individual') ? '0.2' : '1';
     archiveResolutionOptions.style.opacity = opacity;
   }));
+
+  broadcastRtmp.addEventListener('change', () => {
+    const opacity = broadcastRtmp.checked ? '1' : '0.2';
+    broadcastRtmpOptions.style.opacity = opacity;
+  });
 
   document.getElementById('start-archive-btn').addEventListener('click', () => {
     const resolution = document.querySelector('input[name="archiveResolution"]:checked').value;
@@ -94,6 +102,44 @@ window.addEventListener('DOMContentLoaded', () => {
       .then((response) => response.json())
       .then((data) => {
         archiveId = data.id;
+        log(JSON.stringify(data, null, 2));
+      });
+  });
+
+  document.getElementById('start-broadcast-btn').addEventListener('click', () => {
+    const resolution = document.querySelector('input[name="broadcastResolution"]:checked').value;
+    const rtmpUrl = document.getElementById('rtmp-url').value;
+    const hls = document.getElementById('hls');
+    const rtmp = document.getElementById('rtmp');
+
+    log(`startBroadcast  ${resolution} ${hls.checked ? 'hls' : ''} ${rtmp.checked ? 'rtmp' : ''}`);
+    fetch(`/startBroadcast/${sessionId}${location.search}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        hls: hls.checked,
+        rtmp: rtmp.checked,
+        rtmpUrl,
+        resolution,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        broadcastId = data.id;
+        log(JSON.stringify(data, null, 2));
+      });
+  });
+
+  document.getElementById('stop-broadcast-btn').addEventListener('click', () => {
+    log(`stopBroadcast ${broadcastId}`);
+    fetch(`/stopBroadcast/${broadcastId}${location.search}`, {
+      method: 'get',
+    })
+      .then((response) => response.json())
+      .then((data) => {
         log(JSON.stringify(data, null, 2));
       });
   });

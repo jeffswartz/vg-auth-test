@@ -46,6 +46,13 @@
       #archive-resolution-options {
         margin-left: 20px;
       }
+      #rtmp-url {
+        width: 100%;
+        max-width: 620px;
+      }
+      #broadcast-rtmp-options {
+        opacity: 0.2;
+      }
     </style>
 </head>
 <body>
@@ -68,6 +75,8 @@
      <button id="set-class-list-btn" click="setStreamClassLists()">Set my stream's class list</button>
      <button id="list-streams-btn">List streams</button>
      <button id="list-archives-btn">List archives for session</button>
+     <button id="start-broadcast-btn">Start broadcast</button>
+     <button id="stop-broadcast-btn">Stop broadcast</button>
    </div>
    <h4>Options:</h4>
    <div id="archive-options">
@@ -84,6 +93,23 @@
        <label for="hd">HD</label>
        <input type="radio" id="fhd" name="archiveResolution" value="1920x1080">
        <label for="fhd">FHD</label>
+     </p>
+     <p id="broadcast-resolution-options">Broadcast resolution:
+       <input type="radio" id="broadcast-sd" name="broadcastResolution" value="640x480" checked>
+       <label for="sd">SD</label>
+       <input type="radio" id="broadcast-hd" name="broadcastResolution" value="1280x720">
+       <label for="hd">HD</label>
+       <input type="radio" id="broadcast-fhd" name="broadcastResolution" value="1920x1080">
+       <label for="fhd">FHD</label>
+     </p>
+     <p id="broadcast-options">Broadcast output:
+       <input type="checkbox" id="hls">
+       <label for="hls">HLS</label>
+       <input type="checkbox" id="rtmp">
+       <label for="rtmp">RTMP</label>
+     </p>
+     <p id="broadcast-rtmp-options">Broadcast RTMP URL:
+       <input type="input" id="rtmp-url">
      </p>
      <!-- No UI for addArchiveStream or removeArchiveStream yet:
      <p>Archive stream mode:

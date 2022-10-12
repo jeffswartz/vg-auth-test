@@ -113,6 +113,43 @@ app.get('/stopArchive/:id', async (req, res) => {
   }
 });
 
+app.post('/startBroadcast/:sessionId', async (req, res) => {
+  const {
+    resolution,
+    hls,
+    rtmp,
+    rtmpUrl,
+  } = req.body;
+  vonageVideo = getVonageVideo(req);
+  const broadcastOptions = {
+    hls: hls ? {} : undefined,
+    rtmp: rtmp ? [
+      {
+        id: 'sample-id',
+        serverUrl: rtmpUrl,
+        streamName: 'sample-stream-name',
+      },
+    ] : undefined,
+    resolution,
+  };
+  try {
+    const broadcast = await vonageVideo.startBroadcast(req.params.sessionId, broadcastOptions);
+    return res.send(broadcast);
+  } catch (error) {
+    return res.set(400).send();
+  }
+});
+
+app.get('/stopBroadcast/:id', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  try {
+    const broadcast = await vonageVideo.stopBroadcast(req.params.id);
+    return res.send(broadcast);
+  } catch (error) {
+    return res.set(400).send();
+  }
+});
+
 app.get('/listArchives/:sessionId', async (req, res) => {
   vonageVideo = getVonageVideo(req);
   try {
