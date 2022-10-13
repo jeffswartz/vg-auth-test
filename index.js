@@ -67,11 +67,10 @@ app.get('/', async (req, res) => {
     const session = await vonageVideo.createSession({
       mediaMode: 'routed',
     });
-    console.log('new session:', session);
     const query = (req.query && req.query.env) ? `?env=${req.query.env}` : '';
     return res.redirect(`/${session.sessionId}${query}`);
   } catch (err) {
-    return res.set(400).send(err.message);
+    return res.status(400).send(err.message);
   }
 });
 
@@ -99,7 +98,7 @@ app.post('/startArchive/:sessionId', async (req, res) => {
     const archive = await vonageVideo.startArchive(req.params.sessionId, archiveOptions);
     return res.send(archive);
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -109,7 +108,17 @@ app.get('/stopArchive/:id', async (req, res) => {
     const archive = await vonageVideo.stopArchive(req.params.id);
     return res.send(archive);
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
+  }
+});
+
+app.get('/deleteArchive/:id', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  try {
+    await vonageVideo.deleteArchive(req.params.id);
+    return res.send();
+  } catch (error) {
+    return res.status(400).send(error.response.data.message);
   }
 });
 
@@ -158,7 +167,7 @@ app.get('/listArchives/:sessionId', async (req, res) => {
     });
     return res.send(archives);
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -168,7 +177,7 @@ app.get('/forceDisconnect/:sessionId/:connectionId', async (req, res) => {
     await vonageVideo.disconnectClient(req.params.sessionId, req.params.connectionId);
     return res.send('');
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -178,7 +187,7 @@ app.get('/forceMuteStream/:sessionId/:streamId', async (req, res) => {
     await vonageVideo.muteStream(req.params.sessionId, req.params.streamId);
     return res.send('');
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -188,7 +197,7 @@ app.get('/forceMuteAll/:sessionId', async (req, res) => {
     await vonageVideo.muteAllStreams(req.params.sessionId, true);
     return res.send('');
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -198,7 +207,7 @@ app.get('/disableForceMute/:sessionId', async (req, res) => {
     await vonageVideo.muteAllStreams(req.params.sessionId, false);
     return res.send('');
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -211,7 +220,7 @@ app.get('/signalAll/:sessionId', async (req, res) => {
     }, req.params.sessionId);
     return res.send('');
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -224,7 +233,7 @@ app.get('/signalConnection/:sessionId/:connectionId', async (req, res) => {
     }, req.params.sessionId, req.params.connectionId);
     return res.send('');
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -234,7 +243,7 @@ app.get('/listStreams/:sessionId', async (req, res) => {
     const streams = await vonageVideo.getStreamInfo(req.params.sessionId);
     return res.send(streams);
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -244,7 +253,7 @@ app.get('/getStream/:sessionId/:id', async (req, res) => {
     const stream = await vonageVideo.getStreamInfo(req.params.sessionId, req.params.id);
     return res.send(stream);
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
 
@@ -257,6 +266,6 @@ app.get('/setStreamClassLists/:sessionId/:id', async (req, res) => {
     }]);
     return res.send(stream);
   } catch (error) {
-    return res.set(400).send();
+    return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
