@@ -9,7 +9,7 @@ const fs = require('fs');
 
 let vonageVideo;
 const appId = process.env.VONAGE_APP_ID;
-const otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://static.opentok.com/v2/js/opentok.min.js';
+const otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js';
 const keyPath = process.env.VONAGE_PRIVATE_KEY;
 const apiUrl = process.env.VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.vonage.com';
 const devAppId = process.env.DEV_VONAGE_APP_ID;
@@ -37,13 +37,15 @@ function getVonageVideo(req) {
     return new Vonage.Video({
       applicationId: devAppId,
       privateKey: (devKey.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? devKey : fs.readFileSync(devKey),
-      baseUrl: devApiServerUrl,
+    }, {
+      videoHost: devApiServerUrl,
     });
   }
   return new Vonage.Video({
     applicationId: appId,
     privateKey: (keyPath.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? keyPath : fs.readFileSync(keyPath),
-    baseUrl: apiUrl,
+  }, {
+    videoHost: apiUrl,
   });
 }
 
@@ -70,6 +72,7 @@ app.get('/', async (req, res) => {
     const query = (req.query && req.query.env) ? `?env=${req.query.env}` : '';
     return res.redirect(`/${session.sessionId}${query}`);
   } catch (err) {
+    console.log('session create error:', err.response?.data?.detail, err.config);
     return res.status(400).send(err.message);
   }
 });
