@@ -19,7 +19,11 @@ to the environment variables:
 ```
 export VONAGE_APP_ID=123456
 export VONAGE_PRIVATE_KEY="-----BEGIN PRIVATE KEY----- ...." # This can be a path to a key file
-export VONAGE_VIDEO_API_SERVER_URL=https://api.dev.opentok.com
+```
+
+The following defaults are already set (but you can override them):
+
+```export VONAGE_VIDEO_API_SERVER_URL=https://video.api.vonage.com
 export OPENTOK_JS_URL=https://static.opentok.com/v2/js/opentok.min.js
 ```
 
@@ -28,7 +32,12 @@ Also, set these for the dev instance:
 ```
 export DEV_VONAGE_APP_ID=123456
 export DEV_VONAGE_PRIVATE_KEY="-----BEGIN PRIVATE KEY----- ...." # This can be a path to a key file
-export DEV_VONAGE_VIDEO_API_SERVER_URL=https://api.dev.opentok.com
+```
+
+The following defaults are already set for the dev environment (but you can override them):
+
+```
+export DEV_VONAGE_VIDEO_API_SERVER_URL=https://video.api.dev.vonage.com
 export DEV_OPENTOK_JS_URL=https://static.dev.tokbox.com/v2/js/opentok.js
 ```
 
