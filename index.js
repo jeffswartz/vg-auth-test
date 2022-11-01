@@ -126,29 +126,11 @@ app.get('/deleteArchive/:id', async (req, res) => {
 });
 
 app.post('/startBroadcast/:sessionId', async (req, res) => {
-  const {
-    resolution,
-    hls,
-    rtmp,
-    rtmpUrl,
-  } = req.body;
-  vonageVideo = getVonageVideo(req);
-  const broadcastOptions = {
-    hls: hls ? {} : undefined,
-    rtmp: rtmp ? [
-      {
-        id: 'sample-id',
-        serverUrl: rtmpUrl,
-        streamName: 'sample-stream-name',
-      },
-    ] : undefined,
-    resolution,
-  };
   try {
-    const broadcast = await vonageVideo.startBroadcast(req.params.sessionId, broadcastOptions);
+    const broadcast = await vonageVideo.startBroadcast(req.body);
     return res.send(broadcast);
   } catch (error) {
-    return res.set(400).send();
+    return res.set(400).send(error.response.data);
   }
 });
 

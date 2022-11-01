@@ -128,23 +128,31 @@ window.addEventListener('DOMContentLoaded', () => {
     const rtmpUrl = document.getElementById('rtmp-url').value;
     const hls = document.getElementById('hls');
     const rtmp = document.getElementById('rtmp');
+    const broadcastOptions = {
+      sessionId,
+      resolution,
+      outputs: {
+        hls: hls.checked ? { } : undefined,
+        rtmp: rtmp.checked ? [{
+          serverUrl: rtmpUrl,
+          streamName: 'testStream',
+        }] : [],
+      },
+    }
+    console.log(broadcastOptions);
 
-    log(`startBroadcast  ${resolution} ${hls.checked ? 'hls' : ''} ${rtmp.checked ? 'rtmp' : ''}`);
+    log(`startBroadcast  ${JSON.stringify(broadcastOptions)}`);
     fetch(`/startBroadcast/${sessionId}${location.search}`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        hls: hls.checked,
-        rtmp: rtmp.checked,
-        rtmpUrl,
-        resolution,
-      }),
+      body: JSON.stringify(broadcastOptions),
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(333, data.id, data)
         broadcastId = data.id;
         log(JSON.stringify(data, null, 2));
       });
