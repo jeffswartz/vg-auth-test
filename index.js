@@ -156,6 +156,18 @@ app.get('/listArchives/:sessionId', async (req, res) => {
   }
 });
 
+app.get('/listBroadcasts/:sessionId', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  try {
+    const broadcasts = await vonageVideo.searchBroadcasts({
+      sessionId: req.params.sessionId,
+    });
+    return res.send(broadcasts);
+  } catch (error) {
+    return res.status(400).json({ errorMessage: error.response.data.message });
+  }
+});
+
 app.get('/forceDisconnect/:sessionId/:connectionId', async (req, res) => {
   vonageVideo = getVonageVideo(req);
   try {

@@ -138,8 +138,7 @@ window.addEventListener('DOMContentLoaded', () => {
           streamName: 'testStream',
         }] : [],
       },
-    }
-    console.log(broadcastOptions);
+    };
 
     log(`startBroadcast  ${JSON.stringify(broadcastOptions)}`);
     fetch(`/startBroadcast/${sessionId}${location.search}`, {
@@ -152,7 +151,6 @@ window.addEventListener('DOMContentLoaded', () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(333, data.id, data)
         broadcastId = data.id;
         log(JSON.stringify(data, null, 2));
       });
@@ -224,6 +222,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('list-archives-btn').addEventListener('click', () => {
     fetch(`/listArchives/${sessionId}${location.search}`, {
+      method: 'get',
+    })
+      .then((response) => response.json())
+      .then((data) => { log(JSON.stringify(data, null, 2)); });
+  });
+
+  document.getElementById('list-broadcasts-btn').addEventListener('click', () => {
+    fetch(`/listBroadcasts/${sessionId}${location.search}`, {
       method: 'get',
     })
       .then((response) => response.json())
