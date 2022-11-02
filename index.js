@@ -127,7 +127,10 @@ app.get('/deleteArchive/:id', async (req, res) => {
 
 app.post('/startBroadcast/:sessionId', async (req, res) => {
   try {
-    const broadcast = await vonageVideo.startBroadcast(req.body);
+    const broadcast = await vonageVideo.startBroadcast(
+      req.params.sessionId,
+      req.body,
+    );
     return res.send(broadcast);
   } catch (error) {
     return res.set(400).send(error.response.data);
@@ -140,7 +143,7 @@ app.get('/stopBroadcast/:id', async (req, res) => {
     const broadcast = await vonageVideo.stopBroadcast(req.params.id);
     return res.send(broadcast);
   } catch (error) {
-    return res.set(400).send();
+    return res.set(400).send(error.response.data);
   }
 });
 

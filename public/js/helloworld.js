@@ -129,7 +129,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const hls = document.getElementById('hls');
     const rtmp = document.getElementById('rtmp');
     const broadcastOptions = {
-      sessionId,
       resolution,
       outputs: {
         hls: hls.checked ? { } : undefined,
