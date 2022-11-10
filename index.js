@@ -40,8 +40,7 @@ function getVonageVideo(req) {
     }, {
       videoHost: devApiServerUrl,
     });
-  }
-  console.log(234234, appId, fs.readFileSync(keyPath, 'utf8'));
+  }  
   return new Vonage.Video({
     applicationId: appId,
     privateKey: (keyPath.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? keyPath : fs.readFileSync(keyPath, 'utf8'),
