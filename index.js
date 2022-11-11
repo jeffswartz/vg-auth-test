@@ -40,7 +40,7 @@ function getVonageVideo(req) {
     }, {
       videoHost: devApiServerUrl,
     });
-  }  
+  }
   return new Vonage.Video({
     applicationId: appId,
     privateKey: (keyPath.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? keyPath : fs.readFileSync(keyPath, 'utf8'),
@@ -65,12 +65,15 @@ function getOpenTokjsApisUrl(req) {
 
 app.get('/', async (req, res) => {
   vonageVideo = getVonageVideo(req);
+  // The @vonage/video SDK uses enum values of 'enabled' : 'disabled' for the mediaMode option.
+  // See https://github.com/Vonage/vonage-node-sdk/blob/3.x/packages/video/lib/interfaces/MediaMode.ts
+  const mediaMode = (req.query.relayed === 'true') ? 'enabled' : 'disabled';
+  const queryArray = [];
+  Object.keys(req.query).forEach((key) => queryArray.push(`${key}=${req.query[key]}`));
+  const qString = queryArray.length > 0 ? `?${queryArray.join('&')}` : '';
   try {
-    const session = await vonageVideo.createSession({
-      mediaMode: 'routed',
-    });
-    const query = (req.query && req.query.env) ? `?env=${req.query.env}` : '';
-    return res.redirect(`/${session.sessionId}${query}`);
+    const session = await vonageVideo.createSession({ mediaMode });
+    return res.redirect(`/${session.sessionId}${qString}`);
   } catch (err) {
     return res.status(400).send(`Error. ${err.response?.data?.detail}`);
   }

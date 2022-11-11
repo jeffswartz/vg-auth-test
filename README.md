@@ -63,7 +63,11 @@ Or, you can run `npm start` in the root directory of the project.
 
 Visit <http://localhost:3000> in your browser. Open the resulting URL again in a second window.
 
+To use a relayed session, add a `relayed=true` query string parameter: <http://localhost:3000?relayed=true>
+
 ### To test in the dev environment:
 
 Visit <http://localhost:3000?env=dev> in your browser. Open the resulting URL again in a second window.
+
+To use a relayed session, add a `relayed=true` query string parameter: <http://localhost:3000?env=dev&relayed=true>
 
