@@ -1,8 +1,9 @@
 /* global OT, appId, sessionId, token */
 
 const session = OT.initSession(appId, sessionId);
-
-const publisher = OT.initPublisher('publisher');
+const publisherOptions = (window.location.search.indexOf('audioOnly=true') > -1)
+  ? { videoSource: null } : {};
+const publisher = OT.initPublisher('publisher', publisherOptions);
 let streamId;
 let archiveId;
 let broadcastId;

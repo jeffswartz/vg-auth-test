@@ -63,11 +63,29 @@ Or, you can run `npm start` in the root directory of the project.
 
 Visit <http://localhost:3000> in your browser. Open the resulting URL again in a second window.
 
-To use a relayed session, add a `relayed=true` query string parameter: <http://localhost:3000?relayed=true>
-
 ### To test in the dev environment:
 
-Visit <http://localhost:3000?env=dev> in your browser. Open the resulting URL again in a second window.
+Visit <http://localhost:3000?env=dev> (note the query string) in your browser.
+Open the resulting URL again in a second window.
 
-To use a relayed session, add a `relayed=true` query string parameter: <http://localhost:3000?env=dev&relayed=true>
+### Other session options:
 
+You can create a relayed session by including `relayed=true` in the query string:
+
+* In production: <http://localhost:3000?relayed=true>
+
+* In dev: <http://localhost:3000?env=dev&relayed=true>
+
+
+You can create an audio-only session by including `audioOnly=true` in the query string:
+
+* In production: <http://localhost:3000?audioOnly=true>
+
+* In dev: <http://localhost:3000?env=dev&audioOnly=true>
+
+You can create session that is both audio-only and relayed by including both `audioOnly=true` and
+`relayed=true` in the query string:
+
+* In production: <http://localhost:3000?audioOnly=true&relayed=true>
+
+* In dev: <http://localhost:3000?env=dev&audioOnly=true&relayed=true>
