@@ -128,6 +128,7 @@ app.get('/deleteArchive/:id', async (req, res) => {
 });
 
 app.post('/startBroadcast/:sessionId', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
   try {
     const broadcast = await vonageVideo.startBroadcast(
       req.params.sessionId,
