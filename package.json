@@ -14,7 +14,7 @@
   "author": "Jeff Swartz",
   "license": "MIT",
   "dependencies": {
-    "@vonage/video": "0.10.0",
+    "@vonage/video": "^1.0.12",
     "ejs": "^3.1.8",
     "express": "^4.18.1"
   },
