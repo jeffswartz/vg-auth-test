@@ -167,6 +167,55 @@ window.addEventListener('DOMContentLoaded', () => {
       });
   });
 
+  document.getElementById('dial-sip-btn').addEventListener('click', () => {
+    const uri = document.getElementById('sip-uri').value;
+    const from = document.getElementById('sip-from').value || undefined;
+    const headerJson = document.getElementById('sip-headers').value || undefined;
+    const username = document.getElementById('sip-username').value;
+    const password = document.getElementById('sip-password').value;
+    const secure = document.getElementById('sip-secure').checked;
+    const video = document.getElementById('sip-video').checked;
+    const observeForceMute = document.getElementById('sip-observeForceMute').checked;
+    const auth = (username || password) ? {
+      username: username || undefined,
+      password: password || undefined,
+    } : undefined;
+    let headers;
+    let invalidHeaders = false;
+
+    try {
+      headers = JSON.parse(headerJson);
+    } catch (e) {
+      invalidHeaders = true;
+    }
+
+    const sipCallOptions = {
+      uri,
+      from,
+      headers,
+      auth: auth || undefined,
+      secure,
+      video,
+      observeForceMute,
+    };
+
+    if (headerJson && invalidHeaders) {
+      log('invalid SIP headers ignored. JSON should be in the form of { "header1": "value1" }');
+    }
+    fetch(`/dialSip/${sessionId}${location.search}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sipCallOptions),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        log(JSON.stringify(data, null, 2));
+      });
+  });
+
   document.getElementById('force-disconnect-btn').addEventListener('click', () => {
     fetch(`/forceDisconnect/${sessionId}/${session.connection.id}${location.search}`, {
       method: 'get',
