@@ -46,9 +46,20 @@
       #archive-resolution-options {
         margin-left: 20px;
       }
-      #rtmp-url {
+      #options-div {
         width: 100%;
-        max-width: 620px;
+        max-width: 800px;
+      }
+      #options-div > div {
+        display: flex;
+        height: 24px;
+        padding: 2px 0;
+      }
+      #options-div > div > label {
+        flex: 1;
+      }
+      #options-div > div > input {
+        flex: 2;
       }
       #broadcast-rtmp-options {
         opacity: 0.2;
@@ -79,9 +90,10 @@
      <button id="list-broadcasts-btn">List broadcasts for session</button>
      <button id="start-broadcast-btn">Start broadcast</button>
      <button id="stop-broadcast-btn">Stop broadcast</button>
+     <button id="dial-sip-btn">Dial SIP broadcast</button>
    </div>
    <h4>Options:</h4>
-   <div id="archive-options">
+   <div id="options-div">
      <p>Archive output mode:
        <input type="radio" id="composed" name="archiveOutputMode" value="composed" checked>
        <label for="composed">Composed</label>
@@ -110,8 +122,37 @@
        <input type="checkbox" id="rtmp">
        <label for="rtmp">RTMP</label>
      </p>
-     <p id="broadcast-rtmp-options">Broadcast RTMP URL:
-       <input type="input" id="rtmp-url">
+     <div id="broadcast-rtmp-options">Broadcast RTMP URL:
+       <input type="input" id="rtmp-url" class="full-width">
+    </div>
+     <p>MultiArchiveTag and MultiBroadcastTag are not set. Simultaneous archives and broadcasts are not enabled.</p>
+     <div style="display: flex;">
+       <label style="flex: 1;">SIP URI:</label>
+       <input type="input" id="sip-uri" class="full-width" style="flex: 2;">
+     </div>
+     <div>
+       <label for="sip-from">SIP from (optional):</label>
+       <input type="input" id="sip-from" class="full-width">
+     </div>
+     <div style="height: fit-content;">
+       <label>SIP headers (optional,<br>JSON string -- key-value pairs):</label>
+       <input type="input" id="sip-headers" class="full-width">
+     </div>
+     <div>
+       <label>SIP auth username (optional):</label>
+       <input type="input" id="sip-username" class="full-width">
+     </div>
+     <div>
+       <label>SIP auth password (optional):</label>
+       <input type="input" id="sip-password" class="full-width">
+     </div>
+     <p>More SIP settings (optional):
+       <input type="checkbox" id="sip-secure">
+       <label for="sip-secure">secure</label>
+       <input type="checkbox" id="sip-video">
+       <label for="sip-video">video</label>
+       <input type="checkbox" id="sip-observeForceMute">
+       <label for="sip-observeForceMute">observeForceMute</label>
      </p>
      <!-- No UI for addArchiveStream or removeArchiveStream yet:
      <p>Archive stream mode:
@@ -121,7 +162,6 @@
        <label for="manual">Manual (Up to two existing streams when the archive starts are included)</label>
      </p>
      -->
-     <p>MultiArchiveTag and MultiBroadcastTag are not set. Simultaneous archives and broadcasts are not enabled.</p>
   </div>
    <div id="log-div">
      <pre id="log-pre"></pre>
