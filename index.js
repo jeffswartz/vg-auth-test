@@ -176,10 +176,14 @@ app.get('/listBroadcasts/:sessionId', async (req, res) => {
 
 app.post('/dialSip/:sessionId', async (req, res) => {
   vonageVideo = getVonageVideo(req);
+  const token = vonageVideo.generateClientToken(req.params.sessionId);
   try {
     const sip = await vonageVideo.intiateSIPCall(
       req.params.sessionId,
-      req.body,
+      {
+        token,
+        sip: req.body,
+      },
     );
     return res.send(sip);
   } catch (error) {
