@@ -289,3 +289,18 @@ app.get('/setStreamClassLists/:sessionId/:id', async (req, res) => {
     return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
+
+app.post('/audioConnect/:sessionId', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  const token = vonageVideo.generateClientToken(req.params.sessionId);
+  try {
+    const sip = await vonageVideo.connectToWebsocket(
+      req.params.sessionId,
+      token,
+      req.body,
+    );
+    return res.send(sip);
+  } catch (error) {
+    return res.set(400).send(error.response.data);
+  }
+});
