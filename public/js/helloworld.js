@@ -291,6 +291,22 @@ window.addEventListener('DOMContentLoaded', () => {
     })
       .then(log('stream class list updated'));
   });
+
+  document.getElementById('start-audio-connect-btn').addEventListener('click', () => {
+    const uri = document.getElementById('audio-connect-uri').value;
+    fetch(`/audioConnect/${sessionId}${location.search}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uri }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        log(JSON.stringify(data, null, 2));
+      });
+  });
 });
 
 session.connect(token);
