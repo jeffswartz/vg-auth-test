@@ -1,13 +1,19 @@
 /* global OT, appId, sessionId, token */
 
 const session = OT.initSession(appId, sessionId);
-const publisherOptions = (window.location.search.indexOf('audioOnly=true') > -1)
-  ? { videoSource: null } : {};
+const publisherOptions = {
+  insertMode: 'append',
+  publishCaptions: true,
+};
+if (window.location.search.indexOf('audioOnly=true') > -1) {
+  publisherOptions.videoSource = null;
+}
 const publisher = OT.initPublisher('publisher', publisherOptions);
 let streamId;
 let archiveId;
 let broadcastId;
 let lastArchiveId;
+let captionsId;
 let logPre;
 let logDiv;
 
@@ -25,13 +31,38 @@ session.on({
   },
 
   streamCreated(event) {
+    let captionTimer;
     log(`new subscriber stream ${event.stream.id}`);
-    session.subscribe(event.stream, 'streams-container', { insertMode: 'append' });
+
+    const subscriberContainer = document.createElement('div');
+    const captionDiv = document.createElement('div');
+    subscriberContainer.id = `sub-container-${event.stream.id}`;
+
+    subscriberContainer.appendChild(captionDiv);
+    captionDiv.classList.add('caption');
+    document.getElementById('streams-container').appendChild(subscriberContainer);
+
+    const subscriber = session.subscribe(event.stream, subscriberContainer, { insertMode: 'append' });
+    subscriber.subscribeToCaptions(true)
+      .catch((err) => {
+        log(`subscribeToCaptions error: ${err}`);
+      });
+
+    subscriber.on('captionReceived', (captionEvent) => {
+      if (captionTimer) {
+        window.clearTimeout(captionTimer);
+      }
+      captionDiv.innerHTML = captionEvent.caption;
+      captionTimer = window.setTimeout(() => {
+        captionDiv.innerHTML = '';
+      }, 5000);
+    });
   },
+
   streamDestroyed(event) {
     log(`subscriber stream e${event.stream.id}`);
-    session.subscribe(event.stream, 'streams-container', { insertMode: 'append' });
   },
+
   signal(e) {
     log(`signal data:${e.data} -- type: ${e.type}`);
   },
@@ -305,6 +336,44 @@ window.addEventListener('DOMContentLoaded', () => {
       .then((response) => response.json())
       .then((data) => {
         log(JSON.stringify(data, null, 2));
+      });
+  });
+
+  document.getElementById('enable-captions-btn').addEventListener('click', () => {
+    log('enableCaptions');
+    fetch(`/enableCaptions/${sessionId}${location.search}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        log(`enableCaptions response ${JSON.stringify(data, null, 2)}`);
+        captionsId = data.captionsId;
+      });
+  });
+
+  document.getElementById('disable-captions-btn').addEventListener('click', () => {
+    log(`disableCaptions ${captionsId}`);
+    fetch(`/disableCaptions/${captionsId}${location.search}`, {
+      method: 'get',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        log(`disableCaptions response ${JSON.stringify(data, null, 2)}`);
+      });
+  });
+
+  document.getElementById('get-caption-status-btn').addEventListener('click', () => {
+    log(`getCaptionStatus ${captionsId}`);
+    fetch(`/getCaptionStatus/${captionsId}${location.search}`, {
+      method: 'get',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        log(`getCaptionStatus response ${JSON.stringify(data, null, 2)}`);
       });
   });
 });

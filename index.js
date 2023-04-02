@@ -304,3 +304,39 @@ app.post('/audioConnect/:sessionId', async (req, res) => {
     return res.set(400).send(error.response.data);
   }
 });
+
+app.post('/enableCaptions/:sessionId', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  const token = vonageVideo.generateClientToken(req.params.sessionId, {
+    role: 'moderator',
+  });
+  try {
+    const captionsResponse = await vonageVideo.enableCaptions(
+      req.params.sessionId,
+      token,
+    );
+    return res.send(captionsResponse);
+  } catch (error) {
+    return res.set(400).send(error.response.data);
+  }
+});
+
+app.get('/disableCaptions/:id', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  try {
+    const captionsResponse = await vonageVideo.disableCaptions(req.params.id);
+    return res.send(captionsResponse);
+  } catch (error) {
+    return res.status(400).json({ errorMessage: error.response.data.message });
+  }
+});
+
+app.get('/getCaptionStatus/:id', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  try {
+    const captionsResponse = await vonageVideo.getCaptionStatus(req.params.id);
+    return res.send(captionsResponse);
+  } catch (error) {
+    return res.status(400).json({ errorMessage: error.response.data.message });
+  }
+});
