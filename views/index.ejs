@@ -64,13 +64,21 @@
       #broadcast-rtmp-options {
         opacity: 0.2;
       }
+      .caption {
+        color: yellow;
+        text-shadow: 1px 1px 2px black;
+        word-wrap: break-word;
+        position: absolute;
+        z-index: 1000;
+        margin: 4px;
+        height: 200px;
+        width: 260px;
+      }
     </style>
 </head>
 <body>
     <div id="streams-container">
       <div id="publisher"></div>
-
-      <div id="subscribers"></div>
     </div>
 
     <div id="controls">
@@ -92,6 +100,9 @@
      <button id="stop-broadcast-btn">Stop broadcast</button>
      <button id="dial-sip-btn">Dial SIP broadcast</button>
      <button id="start-audio-connect-btn">Start Audio Connect</button>
+     <button id="enable-captions-btn">Enable captions</button>
+     <button id="disable-captions-btn">Disable captions</button>
+     <button id="get-caption-status-btn">Get caption status</button>
    </div>
    <h4>Options:</h4>
    <div id="options-div">
