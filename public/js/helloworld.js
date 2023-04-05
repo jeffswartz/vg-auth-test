@@ -37,6 +37,7 @@ session.on({
     const subscriberContainer = document.createElement('div');
     const captionDiv = document.createElement('div');
     subscriberContainer.id = `sub-container-${event.stream.id}`;
+    subscriberContainer.classList.add('subscriber-container');
 
     subscriberContainer.appendChild(captionDiv);
     captionDiv.classList.add('caption');
