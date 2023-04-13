@@ -14,6 +14,7 @@ let archiveId;
 let broadcastId;
 let lastArchiveId;
 let captionsId;
+let experienceComposerId;
 let logPre;
 let logDiv;
 
@@ -96,7 +97,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const archiveOutputModeInputs = document.querySelectorAll('input[type=radio][name="archiveOutputMode"]');
   const broadcastRtmp = document.getElementById('rtmp');
   const broadcastRtmpOptions = document.getElementById('broadcast-rtmp-options');
+  const experiencComposerUrlInput = document.getElementById('experience-composer-url');
 
+  experiencComposerUrlInput.value = window.location.href;
   archiveOutputModeInputs.forEach((inputElement) => inputElement.addEventListener('change', () => {
     const opacity = (inputElement.value === 'individual') ? '0.2' : '1';
     archiveResolutionOptions.style.opacity = opacity;
@@ -279,7 +282,6 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('signal-all-btn').addEventListener('click', () => {
-    console.log(`${23342}/signalAll/${sessionId}`);
     fetch(`/signalAll/${sessionId}${location.search}`, {
       method: 'get',
     });
@@ -375,6 +377,56 @@ window.addEventListener('DOMContentLoaded', () => {
       .then((response) => response.json())
       .then((data) => {
         log(`getCaptionStatus response ${JSON.stringify(data, null, 2)}`);
+      });
+  });
+
+  document.getElementById('start-experience-composer-btn').addEventListener('click', () => {
+    log('startExperienceComposerRender');
+    fetch(`/startExperienceComposerRender/${location.search}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url: experiencComposerUrlInput.value }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        log(`startExperienceComposerRender response ${JSON.stringify(data, null, 2)}`);
+        experienceComposerId = data.id;
+      });
+  });
+
+  document.getElementById('stop-experience-composer-btn').addEventListener('click', () => {
+    log(`stopExperienceComposerRender ${experienceComposerId}`);
+    fetch(`/stopExperienceComposerRender/${experienceComposerId}${location.search}`, {
+      method: 'get',
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        log(`stopExperienceComposerRender response ${JSON.stringify(data, null, 2)}`);
+      });
+  });
+
+  document.getElementById('list-experience-composers-btn').addEventListener('click', () => {
+    log('listExperienceComposerRenders');
+    fetch(`/listExperienceComposerRenders/${location.search}`, {
+      method: 'POST',
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        log(`listExperienceComposerRenders response ${data}`);
+      });
+  });
+
+  document.getElementById('get-experience-composer-btn').addEventListener('click', () => {
+    log(`getExperienceComposerRender ${experienceComposerId}`);
+    fetch(`/getExperienceComposerRender/${experienceComposerId}${location.search}`, {
+      method: 'get',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        log(`getExperienceComposerRender response ${JSON.stringify(data, null, 2)}`);
       });
   });
 });

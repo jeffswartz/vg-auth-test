@@ -340,3 +340,54 @@ app.get('/getCaptionStatus/:id', async (req, res) => {
     return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
+
+app.post('/startExperienceComposerRender/', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  const { sessionId } = await vonageVideo.createSession();
+  const token = vonageVideo.generateClientToken(sessionId, {
+    role: 'moderator',
+  });
+  try {
+    const experienceComposerResponse = await vonageVideo.startExperienceComposerRender(
+      sessionId,
+      token,
+      req.body,
+    );
+    return res.send(experienceComposerResponse);
+  } catch (error) {
+    return res.set(400).send(error.response.data);
+  }
+});
+
+app.get('/stopExperienceComposerRender/:id', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  try {
+    const ecResponse = await vonageVideo.stopExperienceComposerRender(req.params.id);
+    return res.send(ecResponse);
+  } catch (error) {
+    return res.status(400).json({ errorMessage: error.response.data.message });
+  }
+});
+
+app.get('/getExperienceComposerRender/:id', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  try {
+    const experienceComposerResponse = await vonageVideo.getExperienceComposerRender(req.params.id);
+    return res.send(experienceComposerResponse);
+  } catch (error) {
+    return res.status(400).json({ errorMessage: error.response.data.message });
+  }
+});
+
+app.post('/listExperienceComposerRenders/', async (req, res) => {
+  vonageVideo = getVonageVideo(req);
+  try {
+    const experienceComposerResponse = await vonageVideo.listExperienceComposerRenders({
+      offset: 0,
+      count: 1,
+    });
+    return res.send(experienceComposerResponse);
+  } catch (error) {
+    return res.status(400).json({ errorMessage: error.response.data.message });
+  }
+});
