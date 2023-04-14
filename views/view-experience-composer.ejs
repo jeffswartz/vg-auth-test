@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Vonage Video test app</title>
+    <% if(otjsApiUrl) { %>
+    <script>
+      var OTProperties = {
+        apiURL: "<%= otjsApiUrl %>",
+      };
+    </script>
+    <% } %>
+    <script src="<%= otjsSrcUrl %>"></script>
+    <script type="text/javascript">
+        var appId = '<%= appId %>';
+        var sessionId = '<%= sessionId %>';
+        var token = '<%= token %>';
+    </script>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      hr {
+        max-width: 800px;
+        margin-left: 0;
+      }
+      #log-div {
+        background: silver;
+        width: 100%;
+        max-width: 800px;
+        height: 400px;
+        margin: 8px 0;
+        overflow-y: auto;
+        border: black 1px solid;
+      }
+      #streams-container {
+        display: flex;
+      }
+      #controls {
+        max-width: 900px;
+        margin-top: 8px;
+      }
+      #controls button {
+        margin: 4px 0;
+      }
+      #archive-resolution-options {
+        margin-left: 20px;
+      }
+      #options-div {
+        width: 100%;
+        max-width: 800px;
+      }
+      #options-div > div {
+        display: flex;
+        height: 24px;
+        padding: 2px 0;
+      }
+      #options-div > div > label {
+        flex: 1;
+      }
+      #options-div > div > input {
+        flex: 2;
+      }
+      #broadcast-rtmp-options {
+        opacity: 0.2;
+      }
+      .subscriber-container {
+        position: relative;
+      }
+      .caption {
+        color: yellow;
+        text-shadow: 1px 1px 2px black;
+        word-wrap: break-word;
+        position: absolute;
+        bottom: 0;
+        z-index: 1000;
+        margin: 4px;
+        width: 260px;
+      }
+    </style>
+</head>
+<body>
+    <h1>Experience composer</h1>
+    <p>sessionId <%= sessionId %></p>
+    <div id="ot-container">
+    </div>
+
+    <script src="/js/view-experience-composer.js"></script>
+</body>
+</html>
