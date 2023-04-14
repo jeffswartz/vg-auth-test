@@ -391,3 +391,16 @@ app.post('/listExperienceComposerRenders/', async (req, res) => {
     return res.status(400).json({ errorMessage: error.response.data.message });
   }
 });
+
+app.get('/view-experience-composer/:sessionId', (req, res) => {
+  const { sessionId } = req.params;
+  vonageVideo = getVonageVideo(req);
+  const token = vonageVideo.generateClientToken(sessionId);
+  res.render('view-experience-composer.ejs', {
+    appId: ((req.query && req.query.env) === 'dev') ? devAppId : appId,
+    sessionId,
+    token,
+    otjsSrcUrl: getOpenjsUrl(req),
+    otjsApiUrl: getOpenTokjsApisUrl(req),
+  });
+});

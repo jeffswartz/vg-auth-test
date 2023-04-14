@@ -15,6 +15,7 @@ let broadcastId;
 let lastArchiveId;
 let captionsId;
 let experienceComposerId;
+let experienceComposerSessionId;
 let logPre;
 let logDiv;
 
@@ -394,6 +395,7 @@ window.addEventListener('DOMContentLoaded', () => {
       .then((data) => {
         log(`startExperienceComposerRender response ${JSON.stringify(data, null, 2)}`);
         experienceComposerId = data.id;
+        experienceComposerSessionId = data.sessionId;
       });
   });
 
@@ -406,6 +408,10 @@ window.addEventListener('DOMContentLoaded', () => {
       .then((data) => {
         log(`stopExperienceComposerRender response ${JSON.stringify(data, null, 2)}`);
       });
+  });
+
+  document.getElementById('view-experience-composer-btn').addEventListener('click', () => {
+    window.open(`/view-experience-composer/${experienceComposerSessionId}${location.search}`, '_blank');
   });
 
   document.getElementById('list-experience-composers-btn').addEventListener('click', () => {
