@@ -8,14 +8,23 @@ const app = express();
 const fs = require('fs');
 
 let vonageVideo;
+//prod variables
 const appId = process.env.VONAGE_APP_ID;
 const otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js';
 const keyPath = process.env.VONAGE_PRIVATE_KEY;
 const apiUrl = process.env.VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.vonage.com';
+
+//dev and rel common variables
 const devAppId = process.env.DEV_VONAGE_APP_ID;
 const devKey = process.env.DEV_VONAGE_PRIVATE_KEY;
+
+//dev variables
 const devApiServerUrl = process.env.DEV_VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.dev.vonage.com';
 const devOtjsSrcUrl = process.env.DEV_OPENTOK_JS_URL || 'https://static.dev.tokbox.com/v2/js/opentok.js';
+
+//rel variables
+const relApiServerUrl = process.env.REL_VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.rel.vonage.com';
+const relOtjsSrcUrl = process.env.REL_OPENTOK_JS_URL || 'https://static.rel.tokbox.com/v2/js/opentok.js';
 
 const port = process.env.PORT || 3000;
 
@@ -29,7 +38,9 @@ app.use(express.static(`${__dirname}/public`)); //
 app.use(express.json()); // for parsing application/json
 
 app.listen(port, () => {
-  console.log(`You're app is now ready at http://localhost:${port}`);
+  console.log(`Prod environment can be accessed here -> http://localhost:${port}`);
+  console.log(`Dev/vapid environment can be accessed here -> at http://localhost:${port}?env=dev`);
+  console.log(`Rel/vapir environment can be accessed here -> http://localhost:${port}?env=rel`);
 });
 
 function getVonageVideo(req) {
@@ -40,27 +51,41 @@ function getVonageVideo(req) {
     }, {
       videoHost: devApiServerUrl,
     });
+  } else if ((req.query && req.query.env) === 'rel') {
+    return new Vonage.Video({
+      applicationId: devAppId,
+      privateKey: (devKey.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? devKey : fs.readFileSync(devKey, 'utf8'),
+    }, {
+      videoHost: relApiServerUrl,
+    });
+  } else {
+    return new Vonage.Video({
+      applicationId: appId,
+      privateKey: (keyPath.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? keyPath : fs.readFileSync(keyPath, 'utf8'),
+    }, {
+      videoHost: apiUrl,
+    });
   }
-  return new Vonage.Video({
-    applicationId: appId,
-    privateKey: (keyPath.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? keyPath : fs.readFileSync(keyPath, 'utf8'),
-  }, {
-    videoHost: apiUrl,
-  });
 }
 
 function getOpenjsUrl(req) {
   if ((req.query && req.query.env) === 'dev') {
     return devOtjsSrcUrl;
+  } else if ((req.query && req.query.env) === 'rel') {
+    return relOtjsSrcUrl;
   }
   return otjsSrcUrl;
 }
 
 function getOpenTokjsApisUrl(req) {
+  //using same environment variable DEV_OVERRIDE_OPENTOK_JS_API_URL to override on dev and rel
   if ((req.query && req.query.env) === 'dev') {
     return process.env.DEV_OVERRIDE_OPENTOK_JS_API_URL && devApiServerUrl;
+  } else if((req.query && req.query.env) === 'rel') {
+    return process.env.DEV_OVERRIDE_OPENTOK_JS_API_URL && relApiServerUrl;
+  } else {
+    return process.env.OVERRIDE_OPENTOK_JS_API_URL && apiUrl;
   }
-  return process.env.OVERRIDE_OPENTOK_JS_API_URL && apiUrl;
 }
 
 app.get('/', async (req, res) => {
@@ -83,8 +108,9 @@ app.get('/:sessionId', (req, res) => {
   const { sessionId } = req.params;
   vonageVideo = getVonageVideo(req);
   const token = vonageVideo.generateClientToken(sessionId);
+  
   res.render('index.ejs', {
-    appId: ((req.query && req.query.env) === 'dev') ? devAppId : appId,
+    appId: ((req.query && req.query.env) === 'dev' || (req.query && req.query.env) === 'rel') ? devAppId : appId,
     sessionId,
     token,
     otjsSrcUrl: getOpenjsUrl(req),
@@ -397,7 +423,7 @@ app.get('/view-experience-composer/:sessionId', (req, res) => {
   vonageVideo = getVonageVideo(req);
   const token = vonageVideo.generateClientToken(sessionId);
   res.render('view-experience-composer.ejs', {
-    appId: ((req.query && req.query.env) === 'dev') ? devAppId : appId,
+    appId: ((req.query && req.query.env) === 'dev' || (req.query && req.query.env) === 'rel') ? devAppId : appId,
     sessionId,
     token,
     otjsSrcUrl: getOpenjsUrl(req),
