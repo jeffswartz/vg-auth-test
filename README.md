@@ -27,28 +27,46 @@ The following defaults are already set (but you can override them):
 export OPENTOK_JS_URL=https://static.opentok.com/v2/js/opentok.min.js
 ```
 
-Also, set these for the dev instance:
+Set these for the dev(vapid) instance:
 
 ```
 export DEV_VONAGE_APP_ID=123456
 export DEV_VONAGE_PRIVATE_KEY="-----BEGIN PRIVATE KEY----- ...." # This can be a path to a key file
 ```
 
-The following defaults are already set for the dev environment (but you can override them):
+The following defaults are already set for the dev(vapid) environment (but you can override them):
 
 ```
 export DEV_VONAGE_VIDEO_API_SERVER_URL=https://video.api.dev.vonage.com
 export DEV_OPENTOK_JS_URL=https://static.dev.tokbox.com/v2/js/opentok.js
 ```
 
+Set these for the rel(vapir) instance. If not set it will default to dev variables.
+
+```
+export REL_VONAGE_APP_ID=123456
+export REL_VONAGE_PRIVATE_KEY="-----BEGIN PRIVATE KEY----- ...." # This can be a path to a key file
+```
+
+The following defaults are already set for the rel(vapir) environment (but you can override them):
+
+```
+export REL_VONAGE_VIDEO_API_SERVER_URL=https://video.api.rel.vonage.com
+export REL_OPENTOK_JS_URL=https://static.rel.tokbox.com/v2/js/opentok.js
+```
+
+
 The `VONAGE_VIDEO_API_SERVER_URL` is used for Video API REST calls from the Node server.
 To have OpenTok.js in the web app also use the `VONAGE_VIDEO_API_SERVER_URL` for API calls
 (instead of the API URL loaded from the OpenTok.js config), set `OVERRIDE_OPENTOK_JS_API_URL` 
-(for production) and/or `DEV_OVERRIDE_OPENTOK_JS_API_URL` to `true`:
+(for production) 
+and/or `DEV_OVERRIDE_OPENTOK_JS_API_URL` to `true` for dev(vapid):
+and/or `REL_OVERRIDE_OPENTOK_JS_API_URL` to `true` for rel(vapir):
 
 ```
 export OVERRIDE_OPENTOK_JS_API_URL=true
 export DEV_OVERRIDE_OPENTOK_JS_API_URL=true
+export REL_OVERRIDE_OPENTOK_JS_API_URL=true
 ```
 
 Finally, start the app using node:
@@ -63,9 +81,14 @@ Or, you can run `npm start` in the root directory of the project.
 
 Visit <http://localhost:3000> in your browser. Open the resulting URL again in a second window.
 
-### To test in the dev environment:
+### To test in the dev(vapid) environment:
 
 Visit <http://localhost:3000?env=dev> (note the query string) in your browser.
+Open the resulting URL again in a second window.
+
+### To test in the rel(vapir) environment:
+
+Visit <http://localhost:3000?env=rel> (note the query string) in your browser.
 Open the resulting URL again in a second window.
 
 ### Other session options:
@@ -76,6 +99,8 @@ You can create a relayed session by including `relayed=true` in the query string
 
 * In dev: <http://localhost:3000?env=dev&relayed=true>
 
+* In rel: <http://localhost:3000?env=rel&relayed=true>
+
 
 You can create an audio-only session by including `audioOnly=true` in the query string:
 
@@ -83,9 +108,13 @@ You can create an audio-only session by including `audioOnly=true` in the query 
 
 * In dev: <http://localhost:3000?env=dev&audioOnly=true>
 
+* In rel: <http://localhost:3000?env=rel&audioOnly=true>
+
 You can create session that is both audio-only and relayed by including both `audioOnly=true` and
 `relayed=true` in the query string:
 
 * In production: <http://localhost:3000?audioOnly=true&relayed=true>
 
 * In dev: <http://localhost:3000?env=dev&audioOnly=true&relayed=true>
+
+* In rel: <http://localhost:3000?env=rel&audioOnly=true&relayed=true>

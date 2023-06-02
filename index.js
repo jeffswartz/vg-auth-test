@@ -8,14 +8,23 @@ const app = express();
 const fs = require('fs');
 
 let vonageVideo;
+// prod variables
 const appId = process.env.VONAGE_APP_ID;
-const otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js';
 const keyPath = process.env.VONAGE_PRIVATE_KEY;
+const otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js';
 const apiUrl = process.env.VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.vonage.com';
+
+// dev variables
 const devAppId = process.env.DEV_VONAGE_APP_ID;
 const devKey = process.env.DEV_VONAGE_PRIVATE_KEY;
 const devApiServerUrl = process.env.DEV_VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.dev.vonage.com';
 const devOtjsSrcUrl = process.env.DEV_OPENTOK_JS_URL || 'https://static.dev.tokbox.com/v2/js/opentok.js';
+
+// rel variables
+const relAppId = process.env.REL_VONAGE_APP_ID || process.env.DEV_VONAGE_APP_ID;
+const relKey = process.env.REL_VONAGE_PRIVATE_KEY || process.env.DEV_VONAGE_PRIVATE_KEY;
+const relApiServerUrl = process.env.REL_VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.rel.vonage.com';
+const relOtjsSrcUrl = process.env.REL_OPENTOK_JS_URL || 'https://static.rel.tokbox.com/v2/js/opentok.js';
 
 const port = process.env.PORT || 3000;
 
@@ -29,7 +38,9 @@ app.use(express.static(`${__dirname}/public`)); //
 app.use(express.json()); // for parsing application/json
 
 app.listen(port, () => {
-  console.log(`You're app is now ready at http://localhost:${port}`);
+  console.log(`Prod environment can be accessed here -> http://localhost:${port}`);
+  console.log(`Dev/vapid environment can be accessed here -> at http://localhost:${port}?env=dev`);
+  console.log(`Rel/vapir environment can be accessed here -> http://localhost:${port}?env=rel`);
 });
 
 function getVonageVideo(req) {
@@ -39,6 +50,14 @@ function getVonageVideo(req) {
       privateKey: (devKey.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? devKey : fs.readFileSync(devKey, 'utf8'),
     }, {
       videoHost: devApiServerUrl,
+    });
+  }
+  if ((req.query && req.query.env) === 'rel') {
+    return new Vonage.Video({
+      applicationId: relAppId,
+      privateKey: (relKey.indexOf('-----BEGIN PRIVATE KEY-----') > -1) ? relKey : fs.readFileSync(relKey, 'utf8'),
+    }, {
+      videoHost: relApiServerUrl,
     });
   }
   return new Vonage.Video({
@@ -53,12 +72,28 @@ function getOpenjsUrl(req) {
   if ((req.query && req.query.env) === 'dev') {
     return devOtjsSrcUrl;
   }
+  if ((req.query && req.query.env) === 'rel') {
+    return relOtjsSrcUrl;
+  }
   return otjsSrcUrl;
+}
+
+function getAppId(req) {
+  if ((req.query && req.query.env) === 'dev') {
+    return devAppId;
+  }
+  if ((req.query && req.query.env) === 'rel') {
+    return relAppId;
+  }
+  return appId;
 }
 
 function getOpenTokjsApisUrl(req) {
   if ((req.query && req.query.env) === 'dev') {
     return process.env.DEV_OVERRIDE_OPENTOK_JS_API_URL && devApiServerUrl;
+  }
+  if ((req.query && req.query.env) === 'rel') {
+    return process.env.REL_OVERRIDE_OPENTOK_JS_API_URL && relApiServerUrl;
   }
   return process.env.OVERRIDE_OPENTOK_JS_API_URL && apiUrl;
 }
@@ -83,8 +118,9 @@ app.get('/:sessionId', (req, res) => {
   const { sessionId } = req.params;
   vonageVideo = getVonageVideo(req);
   const token = vonageVideo.generateClientToken(sessionId);
+
   res.render('index.ejs', {
-    appId: ((req.query && req.query.env) === 'dev') ? devAppId : appId,
+    appId: getAppId(req),
     sessionId,
     token,
     otjsSrcUrl: getOpenjsUrl(req),
@@ -396,8 +432,9 @@ app.get('/view-experience-composer/:sessionId', (req, res) => {
   const { sessionId } = req.params;
   vonageVideo = getVonageVideo(req);
   const token = vonageVideo.generateClientToken(sessionId);
+
   res.render('view-experience-composer.ejs', {
-    appId: ((req.query && req.query.env) === 'dev') ? devAppId : appId,
+    appId: getAppId(req),
     sessionId,
     token,
     otjsSrcUrl: getOpenjsUrl(req),
