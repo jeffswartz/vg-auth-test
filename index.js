@@ -11,7 +11,7 @@ let vonageVideo;
 // prod variables
 const appId = process.env.VONAGE_APP_ID;
 const keyPath = process.env.VONAGE_PRIVATE_KEY;
-const otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://unpkg.com/@vonage/video-client@2/dist/js/opentok.js';
+const otjsSrcUrl = process.env.OPENTOK_JS_URL || 'https://unpkg.com/@vonage/client-sdk-video@2/dist/js/opentok.js';
 const apiUrl = process.env.VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.vonage.com';
 
 // dev variables
