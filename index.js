@@ -117,7 +117,10 @@ app.get('/', async (req, res) => {
 app.get('/:sessionId', (req, res) => {
   const { sessionId } = req.params;
   vonageVideo = getVonageVideo(req);
-  const token = vonageVideo.generateClientToken(sessionId);
+  const token = vonageVideo.generateClientToken(sessionId, {
+    // 24-hour expiration
+    expireTime: Math.round((new Date().getTime() + (24 * 60 * 60 * 1000)) / 1000),
+  });
 
   res.render('index.ejs', {
     appId: getAppId(req),
