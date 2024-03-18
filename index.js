@@ -18,7 +18,7 @@ const apiUrl = process.env.VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.von
 const devAppId = process.env.DEV_VONAGE_APP_ID;
 const devKey = process.env.DEV_VONAGE_PRIVATE_KEY;
 const devApiServerUrl = process.env.DEV_VONAGE_VIDEO_API_SERVER_URL || 'https://video.api.dev.vonage.com';
-const devOtjsSrcUrl = process.env.DEV_OPENTOK_JS_URL || 'https://static.dev.tokbox.com/v2/js/opentok.js';
+const devOtjsSrcUrl = process.env.DEV_OPENTOK_JS_URL || 'https://www.dev.tokbox.com/v2/js/opentok.min.js';
 
 // rel variables
 const relAppId = process.env.REL_VONAGE_APP_ID || process.env.DEV_VONAGE_APP_ID;
@@ -36,6 +36,7 @@ if (!(appId && keyPath && devAppId && devKey)) {
 
 app.use(express.static(`${__dirname}/public`)); //
 app.use(express.json()); // for parsing application/json
+app.get('/favicon.ico', (req, res) => res.status(204));
 
 app.listen(port, () => {
   console.log(`Prod environment can be accessed here -> http://localhost:${port}`);
